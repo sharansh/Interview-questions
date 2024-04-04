@@ -40,3 +40,21 @@ const groupedArray = array.reduce((acc, current) => {
 }, {});
 
 console.log(groupedArray);
+
+function findUniquePairsWithSum(array, target) {
+  const pairs = [];
+  const visited = new Set();
+
+  for (let i = 0; i < array.length; i++) {
+    for (let j = i + 1; j < array.length; j++) {
+      const sum = array[i] + array[j];
+      if (sum === target && !visited.has(array[i]) && !visited.has(array[j])) {
+        pairs.push([array[i], array[j]]);
+        visited.add(array[i]);
+        visited.add(array[j]);
+      }
+    }
+  }
+
+  return pairs;
+}
