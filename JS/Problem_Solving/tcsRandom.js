@@ -58,3 +58,6 @@ function findUniquePairsWithSum(array, target) {
 
   return pairs;
 }
+
+setTimeout(function(){console.log('setTimeout')},2000);
+Promise.resolve().then(function(){console.log('promise resolve')})
