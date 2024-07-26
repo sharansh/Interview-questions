@@ -109,22 +109,93 @@ let printName = function (city, state, country){
     let array1 = [[1,2,3],[1,2],[1,3,[4,[5,6]]]];
     let array2 =[[1,2,3],[4,5],[6,7]];
     
-    
-    var myFlat = (arr, n = 1) => {
-        return n > 0 ? arr.reduce((acc, val) => acc.concat(Array.isArray(val) ? myFlat(val, n-1): val ),[])
-        : arr.slice()
+    function myFlat(arr, depth = 1) => {
+        return depth ? arr.reduce((acc, curr) => {
+            [...acc,...(Array.isArray(curr) ? myFlat(curr, depth-1) : [curr])]
+        },[])
+        : arr
     }
-       
-    const arr23 = myFlat(array1)
-    console.log(arr23);
-    
-    
-    // polyfill of call
-    
-    Function.prototype.myCall = function(someObj, ...args){
-        someObj.func = this;
-        someObj.func(...args);
+
+function trottle(func, wait){
+    let waiting = false, lastArgs = null;
+    return function(...args){
+        if(!waiting){
+            waiting = true;
+            func.apply(this, args);
+            let timeout = setTimeout(() => {
+                waiting = false;
+                if(lastArgs){
+                    func.apply(this, lastArgs);
+                    waiting = true;
+                    lastArgs = null;
+                    timeout();
+                }
+                timeout()
+            }, wait)
+        }
+        else{
+            lastArgs = args
+        }
     }
+}
+
+function Debounce(func, wait){
+    let cancel = null
+    return (args) => {
+        clearTimeout(cancel);
+        cancel = setTimeout(() => func(...args), wait)
+    }
+}
+
+function curry(fn){
+    return function curried(...args){
+        if(args.length >= func.length) return fn(...args)
+        return (...args2) => curried(...args, ...args2)
+    }
+}    
+    
+// polyfill of call
+    
+Function.prototype.myCall = function(someObj, ...args){
+    someObj.func = this;
+    someObj.func(...args);
+}
+
+// memoization polyfill
+function memo(func, resolver = (...args) => args.join('_')){
+    const cache = new Map();
+    return function(...args){
+        const cacheKey = resolver(...args);
+        if(cache.has(cacheKey)){
+            return cache.get(cacheKey)
+        }
+        const value = func.apply(this, args);
+        cache.set(cacheKey, value);
+        return value;
+    }
+}
+function testThis(a){
+    return `${this.val}_${a}`;
+}
+const memoFunc = memo(testThis);
+const testSubject = {
+    val: 1,
+    memo: memoFunc
+}
+const testSubject2 = {
+    val: 2,
+    memo: memoFunc
+}
+// 1_1
+console.log(testSubject.memo(1));
+// Expected no cacheing and output 1_1
+console.log(testSubject2.memo(1));
+//Expected to cache
+console.log(testSubject2.memo(1));
+
+
+
+
     
     
     // Questions
