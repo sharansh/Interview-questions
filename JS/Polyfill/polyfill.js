@@ -193,6 +193,16 @@ console.log(testSubject2.memo(1));
 //Expected to cache
 console.log(testSubject2.memo(1));
 
+composition example
+
+function pipe(funcs){
+    return function(arg){
+        return funcs.reduce((result, func) => {
+            return func.call(this, result)
+        }, arg)
+    }
+}
+
 
 
 
