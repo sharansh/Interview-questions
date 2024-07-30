@@ -61,3 +61,30 @@ function findUniquePairsWithSum(array, target) {
 
 setTimeout(function(){console.log('setTimeout')},2000);
 Promise.resolve().then(function(){console.log('promise resolve')})
+
+let items = [
+    {color: 'red', type: 'tv', age: 18},
+    {color: 'silver', type: 'phone', age: 20},
+    {color: 'blue', type: 'book', age: 17},
+];
+
+const excludes = [
+    {k: 'color', v: 'silver'},
+    {k: 'type', v: 'tv'},
+];
+
+function excludesItems(items, excludes){
+    const excludesMap = new Map();
+    for(let {k, v} of excludes){
+        if(!excludeMap.has(k)){
+            excludesMap.set(k, new Set());
+        }
+            excludes.get(k).add(v);
+    }
+    return items.filter(item => {
+     return Object.keys(item).every(
+            key => !excludes.has(key) || !excludesMap.get(key).has(item[key])
+        )
+    })
+}
+console.log({items});
